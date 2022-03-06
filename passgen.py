@@ -18,8 +18,8 @@ def usage():
 
 def run_getopts():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "w:s:nh", ["words", "symbols",
-                                                            "numbers", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "w:s:n:ch", ["words", "symbols",
+                                                            "numbers", "capitals", "help"])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(err) # will print something like "option -a not recognized"
@@ -28,6 +28,7 @@ def run_getopts():
     word_len = ""
     symbol_len = ""
     number_len = ""
+    capitals_len = ""
     for o, a in opts:
             if o in ("-h", "--help"):
                 usage()
@@ -38,6 +39,8 @@ def run_getopts():
                 symbol_len = a
             elif o in ("-n", "--numbers"):
                 number_len = a
+            elif o in ("-c", "--capitals"):
+                capitals_len = a
             else:
                 assert False, "unhandled option"
     if word_len == "":
@@ -46,7 +49,9 @@ def run_getopts():
        symbol_len = 3
     if number_len == "":
         number_len = 3
-    return(word_len, symbol_len, number_len)
+    if capitals_len == "":
+        capitals_len = 0
+    return(word_len, symbol_len, number_len, capitals_len)
 
 
 
@@ -55,5 +60,6 @@ if __name__ == '__main__':
     script_path = os.path.dirname(os.path.abspath(__file__))
     with open(f'{script_path}/letters.json') as file:
         letters_dict = json.load(file)
-    word_len, symbol_len, number_len = run_getopts()
-    print(f'{word_len} {symbol_len} {number_len}')
+    word_len, symbol_len, number_len, capitals_len = run_getopts()
+    print(f'{word_len} {symbol_len} {number_len} {capitals_len}')
+
