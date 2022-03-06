@@ -1,0 +1,59 @@
+#!/Users/thomasnicholson/opt/anaconda3/bin/python
+'''
+Generates a password from a list of words and selects symbols and numbers to
+append
+'''
+
+import os
+import sys
+import getopt
+import json
+
+help = '''
+Help message can go here
+'''
+
+def usage():
+    print(help)
+
+def run_getopts():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "w:s:nh", ["words", "symbols",
+                                                            "numbers", "help"])
+    except getopt.GetoptError as err:
+        # print help information and exit:
+        print(err) # will print something like "option -a not recognized"
+        usage()
+        sys.exit(2)
+    word_len = ""
+    symbol_len = ""
+    number_len = ""
+    for o, a in opts:
+            if o in ("-h", "--help"):
+                usage()
+                sys.exit()
+            elif o in ("-w", "--words"):
+                word_len = a
+            elif o in ("-s", "--symbols"):
+                symbol_len = a
+            elif o in ("-n", "--numbers"):
+                number_len = a
+            else:
+                assert False, "unhandled option"
+    if word_len == "":
+        word_len = 3
+    if symbol_len == "":
+       symbol_len = 3
+    if number_len == "":
+        number_len = 3
+    return(word_len, symbol_len, number_len)
+
+
+
+
+if __name__ == '__main__':
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    with open(f'{script_path}/letters.json') as file:
+        letters_dict = json.load(file)
+    word_len, symbol_len, number_len = run_getopts()
+    print(f'{word_len} {symbol_len} {number_len}')
