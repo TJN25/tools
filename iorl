@@ -1,0 +1,79 @@
+#!/Users/thomasnicholson/opt/anaconda3/bin/python
+
+'''
+Takes an string characters passed from the terminal by the user and returns the 
+names of the characters (or phonetic names of letters).
+'''
+
+import sys
+import os
+import json
+
+script_path = os.path.dirname(os.path.abspath(__file__))
+user_input = sys.argv
+if len(user_input) != 2:
+    print('Provide a single input or use -h for help')
+    exit()
+
+if user_input[1] == '-h':
+    print('Type any string to get back the names of the symbols, characters and numbers')
+    exit()
+
+#letters_dict = pd.read_csv(f'{script_path}/letters.csv', header=None, index_col=0, squeeze=True).to_dict()
+with open(f'{script_path}/letters.json') as file:
+    letters_dict = json.load(file)
+
+output_str = ''
+output_letter = ''
+stored_char = None
+for letter in user_input[1].upper():
+    if stored_char is not None:
+        if letter == 'T':
+            output_str += 'Tab '
+            output_letter += '\\t' 
+            stored_char = None
+            continue
+        elif letter == 'N':
+            output_str += 'Newline '
+            output_letter += '\\n' 
+            stored_char = None
+            continue
+        elif letter == 'R':
+            output_str += 'Returncarriage ' 
+            output_letter += '\\r' 
+            stored_char = None
+            continue
+        else:
+            output_str += letters_dict[stored_char]
+            output_str += ' '
+            output_letter += f'{stored_char}' 
+            if letter == ' ':
+                output_str += 'Space '
+                output_letter += ' ' 
+            elif letter in letters_dict:
+                output_str += letters_dict[letter]
+                output_str += ' '
+                output_letter += f'{letter}' 
+            else:
+                print(f'{letter} is not in the letters list')
+                output_str += letter
+                output_str += ' '
+                output_letter += f'{letter}' 
+            stored_char = None
+    if letter == '\\':
+        stored_char = letter
+        continue
+    elif letter == ' ':
+        output_str += 'Space '
+        output_letter += ' '
+    elif letter in letters_dict:
+        output_str += letters_dict[letter]
+        output_str += ' '
+        output_letter += f'{letter}' 
+    else:
+        print(f'{letter} is not in the letters list')
+        output_str += letter
+        output_str += ' '
+        output_letter += f'{letter}' 
+print(output_letter)
+print(output_str)

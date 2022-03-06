@@ -1,0 +1,12 @@
+#!/bin/sh
+#session name
+session=$1
+
+#Start new session with name
+tmux new-session -d -s $session
+
+tmux rename-window -t 0 'Main'
+tmux split-window -v
+tmux split window -h 
+
+tmux attach-session -t $session:0
