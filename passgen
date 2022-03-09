@@ -58,7 +58,7 @@ def run_getopts():
 
 if __name__ == '__main__':
     script_path = os.path.dirname(os.path.abspath(__file__))
-    with open(f'{script_path}/letters.json') as file:
+    with open(f'{script_path}/data/letters.json') as file:
         letters_dict = json.load(file)
     word_len, symbol_len, number_len, capitals_len = run_getopts()
     print(f'{word_len} {symbol_len} {number_len} {capitals_len}')
