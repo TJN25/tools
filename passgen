@@ -3,11 +3,12 @@
 Generates a password from a list of words and selects symbols and numbers to
 append
 '''
-
+#TODO add in some way of checking if capitals are required and add them
 import os
 import sys
 import getopt
-import json
+import random
+import cosihaveto as ch
 
 help = '''
 Help message can go here
@@ -34,13 +35,13 @@ def run_getopts():
                 usage()
                 sys.exit()
             elif o in ("-w", "--words"):
-                word_len = a
+                word_len = int(a)
             elif o in ("-s", "--symbols"):
-                symbol_len = a
+                symbol_len = int(a)
             elif o in ("-n", "--numbers"):
-                number_len = a
+                number_len = int(a)
             elif o in ("-c", "--capitals"):
-                capitals_len = a
+                capitals_len = int(a)
             else:
                 assert False, "unhandled option"
     if word_len == "":
@@ -58,8 +59,39 @@ def run_getopts():
 
 if __name__ == '__main__':
     script_path = os.path.dirname(os.path.abspath(__file__))
-    with open(f'{script_path}/data/letters.json') as file:
-        letters_dict = json.load(file)
+    letters_dict = ch.load_file(f'{script_path}/data/letters.json')
+    valid_sounds = ch.load_file(f"{script_path}/data/passwordinputs.json")
+    letter_frequencies = ch.load_file(f"{script_path}/data/letter_frequencies_3.json")
     word_len, symbol_len, number_len, capitals_len = run_getopts()
     print(f'{word_len} {symbol_len} {number_len} {capitals_len}')
+    suggested_word = ""
+    print(random.randint(0,10))
+    while word_len > 0:
+        choose_type = random.randint(0,2)
+        if choose_type == 2 and number_len > 0:
+            suggested_word += str(random.choice(valid_sounds['numbers']))
+            number_len -= 1
+            continue
+        current_word_size = random.randint(4,6)
+        if choose_type == 1 and symbol_len > 0:
+            suggested_word += str(random.choice(valid_sounds['symbols']))
+            symbol_len -= 1
+            continue
+        if len(suggested_word) > 0:
+            suggested_word += ch.build_word(" ",current_word_size, valid_sounds,
+                                       letter_frequencies, False, False, False)
+        else:
+            suggested_word += ch.build_word("",current_word_size, valid_sounds,
+                                       letter_frequencies, False, False, False)
+        word_len -= 1 
+    while number_len > 0:
+         suggested_word += str(random.choice(valid_sounds['numbers']))
+         number_len -= 1
+    while symbol_len > 0:
+         suggested_word += str(random.choice(valid_sounds['symbols']))
+         symbol_len -= 1
 
+
+
+
+    print(suggested_word)
