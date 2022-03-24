@@ -49,4 +49,5 @@ def build_word(current_word, length_left, dict, letter_frequencies, prefix, suff
 
     return current_word
 
-
+if __name__ == '__main__':
+    print("You shouldn't be running me directly")
