@@ -1,0 +1,135 @@
+#!/Users/thomasnicholson/opt/anaconda3/bin/python
+
+'''
+Convert between units
+'''
+
+import sys
+import os
+import json
+import getopt
+import math
+
+
+def run_getopts():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "i:o:v:t:h", ["in-unit", "out-unit",
+                                                               "value", "type", "help"])
+    except getopt.GetoptError as err:
+        # print help information and exit:
+        print(err) # will print something like "option -a not recognized"
+        usage()
+        sys.exit(2)
+    in_unit = ""
+    out_unit = ""
+    value  = 0
+    unit_type  = ""
+    for o, a in opts:
+            if o in ("-h", "--help"):
+                usage()
+                sys.exit()
+            elif o in ("-i", "--in-unit"):
+                in_unit = a
+            elif o in ("-o", "--out-unit"):
+                out_unit = a
+            elif o in ("-v", "--value"):
+                value  = float(a)
+            elif o in ("-t", "--type"):
+                unit_type  = a
+            else:
+                assert False, "unhandled option"
+    if in_unit == "":
+        print("Missing input unit. See --help for more details.")
+        sys.exit()
+    if out_unit == "":
+        print("Auto-selecting units")
+
+    return(in_unit, out_unit, unit_type, value)
+
+def convert_to(current_dict, in_unit, out_unit, value, no_auto_select):
+    if out_unit == "":
+        out_unit = auto_select_unit(current_dict, in_unit, value, no_auto_select)
+    try:
+        out_pos = current_dict[out_unit][0]
+    except KeyError:
+        print("Incorrect output unit. See --help for more details.")
+        sys.exit()
+    out_value = round(value * current_dict[in_unit][out_pos], 3)
+    return(out_value, out_unit)
+
+def get_dict(units_dict, unit_type, in_unit, out_unit):
+    if unit_type == "":
+        for key in units_dict:
+            if in_unit in units_dict[key]:
+                return(units_dict[key], key)
+    else:
+        if unit_type in units_dict:
+            return(units_dict[unit_type], unit_type)
+        else:
+            print("Incorrect unit type. See --help for more details.")
+            sys.exit()
+
+def auto_select_unit(current_dict, in_unit, value, no_auto_select):
+    current_value = value
+    selected_count = 0
+    counter = 0
+    selected_key = in_unit
+    for out_conversion in current_dict[in_unit][1:]:
+        counter += 1
+        out_value = value * out_conversion
+        if current_value > 1:
+            if out_value > 1 and out_value < current_value:
+                for key in current_dict:
+                    if key not in no_auto_select:
+                        if current_dict[key][0] == counter:
+                            current_value = out_value
+                            selected_count = counter
+                            selected_key = key
+        else:
+            if out_value > 1:
+                for key in current_dict:
+                    if current_dict[key][0] == counter:
+                        current_value = out_value
+                        selected_count = counter
+                        selected_key = key
+    return(selected_key)
+
+def convert_temp(current_dict, in_unit, out_unit, value):
+    if out_unit == "":
+        if in_unit == "C":
+            out_unit = "F"
+        else:
+            out_unit ="C"
+    try:
+        out_pos = current_dict[out_unit][0]
+    except KeyError:
+        print("Incorrect output unit. See --help for more details.")
+        sys.exit()
+    multiplier = current_dict[in_unit][out_pos][0]
+    adder_1 = current_dict[in_unit][out_pos][1]
+    adder_2 = current_dict[in_unit][out_pos][2]
+
+    if out_unit == "F":
+        if in_unit == "C":
+            out_value = (value * multiplier) + adder_1 
+        else:
+            out_value = (value + adder_2) * multiplier + adder_1
+    else:
+        out_value = (value + adder_1) * multiplier + adder_2
+    out_value = round(out_value, 3)
+    return(out_value, out_unit)
+
+if __name__ == '__main__':
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    in_unit, out_unit, unit_type, value = run_getopts()
+
+    #letters_dict = pd.read_csv(f'{script_path}/letters.csv', header=None, index_col=0, squeeze=True).to_dict()
+    with open(f'{script_path}/data/units.json') as file:
+        units_dict = json.load(file)
+
+    current_dict, unit_type = get_dict(units_dict, unit_type, in_unit, out_unit)
+    if unit_type == "temperature":
+        out_value, out_unit = convert_temp(current_dict, in_unit, out_unit, value)
+    else:
+        out_value, out_unit = convert_to(current_dict, in_unit, out_unit, value, units_dict["no_auto_select"])
+    print(f'{out_value} {out_unit}')
