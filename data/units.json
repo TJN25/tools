@@ -77,5 +77,5 @@
         "K" : [3, [1, -273.15, 0], [1.8, 32, -273.15], [1, 0, 0]]
     },
 
-    "no_auto_select" : ["st", "short-ton", "long-ton", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "nmi", "yd"]
+    "no_auto_select" : ["st", "short-ton", "long-ton", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "nmi", "yd", "long-tonne", "short-ton"]
 }

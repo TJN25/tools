@@ -1,4 +1,4 @@
-#!/Users/thomasnicholson/opt/anaconda3/bin/python
+#!/usr/bin/python
 '''
 Generates a password from a list of words and selects symbols and numbers to
 append
@@ -63,9 +63,9 @@ if __name__ == '__main__':
     valid_sounds = ch.load_file(f"{script_path}/data/passwordinputs.json")
     letter_frequencies = ch.load_file(f"{script_path}/data/letter_frequencies_3.json")
     word_len, symbol_len, number_len, capitals_len = run_getopts()
-    print(f'{word_len} {symbol_len} {number_len} {capitals_len}')
+    #print(f'{word_len} {symbol_len} {number_len} {capitals_len}')
     suggested_word = ""
-    print(random.randint(0,10))
+    #print(random.randint(0,10))
     while word_len > 0:
         choose_type = random.randint(0,2)
         if choose_type == 2 and number_len > 0:

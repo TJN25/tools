@@ -1,4 +1,4 @@
-#!/Users/thomasnicholson/opt/anaconda3/bin/python
+#!/usr/bin/python
 
 '''
 Takes an string characters passed from the terminal by the user and returns the 
