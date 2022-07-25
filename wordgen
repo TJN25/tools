@@ -1,5 +1,4 @@
-#!/Users/thomasnicholson/opt/anaconda3/bin/python
-
+#!/usr/bin/python3
 import sys
 import os
 import getopt
