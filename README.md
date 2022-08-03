@@ -34,3 +34,7 @@ Usage: `wordgen`
 
 TODO: add an option for variable word lengths, and selection of subtypes (e.g.
 scientific, uses prefixes/suffixes, sound types ).
+
+## unitc
+
+-   Convert units

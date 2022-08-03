@@ -1,0 +1,31 @@
+#!/bin/bash
+
+usage() { echo "Help message here" 1>&2; exit 1;  }
+
+while getopts "f:a:h" o; do
+    case "${o}" in
+         f)
+             file=${OPTARG}
+            ;;
+         a)
+            grep_args=${OPTARG}
+            ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+
+if [ $1 == "-a" ] || [  $2 == "-a" ]; then
+    grep_strings="${@:5}"
+    grep $grep_args $grep_strings $file
+else
+    grep_strings="${@:3}"
+    grep $grep_strings $file
+fi
+
+
