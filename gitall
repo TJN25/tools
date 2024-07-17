@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Parse command-line options
+while getopts ":m:b:v:t:a:" opt; do
+    case ${opt} in
+        m ) commit_message="$OPTARG";;
+        v ) version="$OPTARG";;
+        t ) title="$OPTARG";;
+        a ) arch="$OPTARG";;
+        \? ) echo "Usage: git_commit_push [-m commit_message] [-v version] [-t title] [-a architecture]"
+             return 1;;
+    esac
+done
+shift $((OPTIND -1))
+
+if [ -z "$commit_message" ]; then
+commit_message="${title}@${version} added for ${arch}"
+fi
+
+echo $commit_message
+
+exit 0
+
+# Add all changes
+git add .
+
+# Show git status
+git status
+
+# Prompt user to verify changes
+read -p "Are you sure you want to commit these changes? (y/n): " confirm
+if [[ $confirm != [yY] ]]; then
+    echo "Aborted."
+    return 1
+fi
+
+# Commit changes
+git commit -m "$commit_message"
+
+# Pull latest changes from remote
+git pull 
+
+# Push changes to remote
+git push 
+
