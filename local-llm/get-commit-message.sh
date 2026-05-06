@@ -171,7 +171,7 @@ msg="$(
     "$prompt" \
     "$status" \
     "$diff" |
-    ollama run qwen2.5-coder:7b |
+    ollama run --nowordwrap qwen2.5-coder:7b |
     perl -pe 's/\e\[[0-9;?]*[ -\/]*[@-~]//g; s/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]//g'
 )"
 
