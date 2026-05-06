@@ -101,7 +101,7 @@ fi
 }
 
 printf '%s\n\nStatus:\n%s\n\nDiff:\n%s\n' \
-  'Write a one-line Conventional Commit message for these changes. Use one of: fix:, feat:, docs:, refactor:, test:, chore:. Summarize the specific change in 8-14 words. No markdown. No quotes.' \
+  'Write a short Conventional Commit message for these changes. Use one of: fix:, feat:, docs:, refactor:, test:, chore:. No markdown. No quotes.' \
   "$status" \
   "$diff" |
   ollama run gemma3:4b
