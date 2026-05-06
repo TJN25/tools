@@ -2,3 +2,4 @@
 .__pycache__/
 histgrep/
 capsules-cli/
+.DS_Store
