@@ -117,7 +117,6 @@ Use exactly one of these types:
 - fix: for bug fixes, broken behaviour, incorrect output, error handling, or cleanup of bad generated output
 - docs: for documentation-only changes
 - test: for test-only changes
-- refactor: for internal restructuring that does not change behaviour
 - chore: for maintenance changes that do not affect behaviour
 
 If multiple types apply, prefer this order:
@@ -126,8 +125,7 @@ If multiple types apply, prefer this order:
 2. feat
 3. docs
 4. test
-5. refactor
-6. chore
+5. chore
 
 # Constraints
 
@@ -141,6 +139,14 @@ If multiple types apply, prefer this order:
 - No quotes
 - No trailing explanation
 
+# Diff Interpretation Rules
+
+- Lines starting with `+` are added by this change
+- Lines starting with `-` are removed by this change
+- Do not describe an added `rm`, `delete`, or cleanup command as removing code/files from the repository
+- Describe the net behaviour introduced by the change
+- Prefer the purpose of the change over the literal shell command names
+
 # Good Examples
 
 fix: strip terminal control characters from generated commit messages
@@ -151,7 +157,6 @@ docs: clarify staged and unstaged diff handling
 
 # Bad Examples
 
-refactor: update script to improve user experience
 chore: make changes
 feat: enhance script
 fix: update files
