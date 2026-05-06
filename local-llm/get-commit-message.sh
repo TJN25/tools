@@ -100,8 +100,73 @@ fi
   exit 1
 }
 
-printf '%s\n\nStatus:\n%s\n\nDiff:\n%s\n' \
-  'Write a short Conventional Commit message for these changes. Use one of: fix:, feat:, docs:, refactor:, test:, chore:. No markdown. No quotes.' \
-  "$status" \
-  "$diff" |
-  ollama run gemma3:4b
+prompt='
+# Role
+
+You are a careful git commit message writer.
+
+# Task
+
+Write one Conventional Commit message for the provided git changes.
+
+# Commit Type Rules
+
+Use exactly one of these types:
+
+- feat: for new user-visible behaviour, new commands, new options, or new workflow support
+- fix: for bug fixes, broken behaviour, incorrect output, error handling, or cleanup of bad generated output
+- docs: for documentation-only changes
+- test: for test-only changes
+- refactor: for internal restructuring that does not change behaviour
+- chore: for maintenance changes that do not affect behaviour
+
+If multiple types apply, prefer this order:
+
+1. fix
+2. feat
+3. docs
+4. test
+5. refactor
+6. chore
+
+# Constraints
+
+- Output exactly one line
+- Start with exactly one Conventional Commit type
+- Do not use a scope unless it is clearly helpful
+- Describe the concrete behavioural change
+- Prefer specific verbs over generic words like update, improve, change, enhance
+- Do not mention implementation details unless they are the user-visible point
+- No markdown
+- No quotes
+- No trailing explanation
+
+# Good Examples
+
+fix: strip terminal control characters from generated commit messages
+feat: copy generated commit messages to the macOS clipboard
+feat: notify when commit message generation finishes
+fix: fall back to staged diff when working tree output is too large
+docs: clarify staged and unstaged diff handling
+
+# Bad Examples
+
+refactor: update script to improve user experience
+chore: make changes
+feat: enhance script
+fix: update files
+'
+
+msg="$(
+  printf '%s\n\nStatus:\n%s\n\nDiff:\n%s\n' \
+    "$prompt" \
+    "$status" \
+    "$diff" |
+    ollama run qwen2.5-coder:7b |
+    perl -pe 's/\e\[[0-9;?]*[ -\/]*[@-~]//g; s/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]//g'
+)"
+
+printf '%s\n' "$msg"
+printf '%s' "$msg" | pbcopy
+osascript -e 'display notification "Commit message copied to clipboard" with title "git commit message"'
+printf '\a'
