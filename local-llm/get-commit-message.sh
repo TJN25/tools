@@ -87,15 +87,19 @@ ignore=(
   ':(exclude)**/.cache/**'
 )
 
-diff="$(git diff -- . "${ignore[@]}")"
 status="$(git status --short -- . "${ignore[@]}")"
+
+diff="$(
+  git diff --cached -- . "${ignore[@]}"
+  git diff -- . "${ignore[@]}"
+)"
 
 if [ "${#diff}" -gt "$max_chars" ] || [ "${#status}" -gt "$max_chars" ]; then
   diff="$(git diff --cached -- . "${ignore[@]}")"
   status="$(git diff --cached --name-status -- . "${ignore[@]}")"
 fi
 
-[ -n "$diff" ] || {
+[ -n "$status" ] || {
   echo "No changes after script ignores"
   exit 1
 }
